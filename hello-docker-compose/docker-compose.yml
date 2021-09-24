@@ -4,7 +4,7 @@ services:
   # Node app + Dapr sidecar
   ############################
   nodeapp:
-    build: ./node
+    image: grayfrost/mynodeapp
     ports:
       - "50002:50002"
     depends_on:
@@ -29,7 +29,7 @@ services:
   # Python app + Dapr sidecar
   ############################
   pythonapp:
-    build: ./python
+    image: grayfrost/mypyapp
     depends_on:
       - redis
       - placement
