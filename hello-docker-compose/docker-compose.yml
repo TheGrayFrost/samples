@@ -10,6 +10,7 @@ services:
     depends_on:
       - redis
       - placement
+      - zipkin
     networks:
       - hello-dapr
   nodeapp-dapr:
@@ -19,7 +20,8 @@ services:
      "-app-port", "3000",
      "-placement-host-address", "placement:50006",
      "-dapr-grpc-port", "50002",
-     "-components-path", "/components"]
+     "-components-path", "/components",
+     "-config", "/components/config.yaml"]
     volumes:
         - "./components/:/components"
     depends_on:
@@ -29,10 +31,11 @@ services:
   # Python app + Dapr sidecar
   ############################
   pythonapp:
-    image: grayfrost/mypyapp
+    image: tanaybhartia14/pyapp
     depends_on:
       - redis
       - placement
+      - zipkin
     networks:
       - hello-dapr
   pythonapp-dapr:
@@ -40,7 +43,8 @@ services:
     command: ["./daprd",
     "-app-id", "pythonapp",
     "-placement-host-address", "placement:50006",
-     "-components-path", "/components"]
+     "-components-path", "/components",
+    "-config", "/components/config.yaml"]
     volumes:
       - "./components/:/components"
     depends_on:
@@ -54,6 +58,15 @@ services:
     command: ["./placement", "-port", "50006"]
     ports:
       - "50006:50006"
+    networks:
+      - hello-dapr
+  ############################
+  # Zipkin
+  ############################
+  zipkin:
+    image: "openzipkin/zipkin"
+    ports:
+      - "9411:9411"
     networks:
       - hello-dapr
   ############################
