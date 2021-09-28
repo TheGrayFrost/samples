@@ -9,7 +9,6 @@ services:
       - "3500:3500"
     depends_on:
       - redis
-      - placement
     networks:
       - hello-dapr
   nodeapp-dapr:
@@ -17,7 +16,6 @@ services:
     command: ["./daprd",
      "-app-id", "nodeapp",
      "-app-port", "3000",
-     "-placement-host-address", "placement:50006",
      "-components-path", "/components",
      "-config", "/components/config.yaml"]
     volumes:
@@ -25,16 +23,6 @@ services:
     depends_on:
       - nodeapp
     network_mode: "service:nodeapp"
-  ############################
-  # Dapr placement service
-  ############################
-  placement:
-    image: "daprio/dapr"
-    command: ["./placement", "-port", "50006"]
-    ports:
-      - "50006:50006"
-    networks:
-      - hello-dapr
   ############################
   # Redis state store
   ############################
